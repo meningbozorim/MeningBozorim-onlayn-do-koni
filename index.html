@@ -1,1 +1,92 @@
 
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MeningBozorim</title>
+<style>
+body{font-family:Arial,sans-serif;margin:0;background:#f2f8f2;color:#20352a}
+header{background:#16834a;color:white;text-align:center;padding:25px 10px}
+main{max-width:950px;margin:auto;padding:20px}
+h2{color:#16834a}
+#search{width:100%;padding:13px;box-sizing:border-box;border:1px solid #ccc;border-radius:9px;margin-bottom:18px}
+.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:14px}
+.item{background:white;padding:16px;border-radius:12px;text-align:center;box-shadow:0 2px 7px #0001}
+.emoji{font-size:40px}
+button{background:#16834a;color:white;border:0;padding:10px 12px;border-radius:8px;cursor:pointer}
+.price{color:#16834a;font-weight:bold}
+.panel{background:white;padding:18px;border-radius:12px;margin-top:22px}
+input,textarea{padding:12px;border:1px solid #ccc;border-radius:8px;box-sizing:border-box;width:100%;margin:6px 0}
+footer{background:#173b2a;color:white;padding:22px;text-align:center;margin-top:25px}
+footer a{color:white}
+</style>
+</head>
+<body>
+<header>
+<h1>🛒 MeningBozorim</h1>
+<p>Yangi mahsulotlar — onlayn buyurtma</p>
+</header>
+<main>
+<h2>Bizning mahsulotlar</h2>
+<p>Barcha narxlar kelishiladi. Mahsulotni tanlab, savatga qo‘shing!</p>
+<input id="search" placeholder="🔎 Mahsulot qidirish..." oninput="showProducts()">
+<div class="products" id="products"></div>
+
+<div class="panel">
+<h2>🧺 Savatingiz</h2>
+<div id="cart">Savat hozircha bo‘sh.</div>
+<p><b>Umumiy narx:</b> Kelishiladi</p>
+<h2>Buyurtma berish</h2>
+<input id="name" placeholder="Ismingiz">
+<input id="phone" placeholder="Telefon raqamingiz">
+<textarea id="address" placeholder="Manzilingiz (G‘ishti)"></textarea>
+<button onclick="order()">WhatsApp orqali buyurtma berish</button>
+</div>
+</main>
+<footer>
+<h2 style="color:white">Aloqa</h2>
+<p>📞 <a href="tel:+998914023337">+998 91 402 33 37</a></p>
+<p>✉️ <a href="mailto:atoevraximjon@gmail.com">atoevraximjon@gmail.com</a></p>
+<p>📍 Manzil: G‘ishti</p>
+<p>© MeningBozorim</p>
+</footer>
+<script>
+const goods=[
+["Kartoshka","🥔"],["Oq piyoz","🧅"],["Qizil piyoz","🧅"],
+["Sabzi","🥕"],["Sholg‘om","🫜"],["Sariq sabzi","🥕"],
+["Bodring","🥒"],["Pomidor","🍅"],["Chesnok","🧄"],
+["Limon","🍋"],["Banan","🍌"]
+];
+let basket={};
+function showProducts(){
+let q=document.getElementById("search").value.toLowerCase();
+document.getElementById("products").innerHTML=goods.filter(g=>g[0].toLowerCase().includes(q)).map(g=>
+`<div class="item"><div class="emoji">${g[1]}</div><h3>${g[0]}</h3><p class="price">Kelishiladi</p><button onclick="add('${g[0]}')">Savatga qo‘shish</button></div>`
+).join("");
+}
+function add(n){basket[n]=(basket[n]||0)+1;showCart();}
+function showCart(){
+let keys=Object.keys(basket).filter(n=>basket[n]>0);
+document.getElementById("cart").innerHTML=keys.length?keys.map(n=>
+`<p>${n} — ${basket[n]} ta <button onclick="add('${n}')">+</button> <button onclick="minus('${n}')">−</button></p>`
+).join(""):"Savat hozircha bo‘sh.";
+}
+function minus(n){basket[n]--;if(basket[n]<=0)delete basket[n];showCart();}
+function order(){
+let keys=Object.keys(basket).filter(n=>basket[n]>0);
+if(!keys.length){alert("Avval savatga mahsulot qo‘shing!");return;}
+let name=document.getElementById("name").value.trim();
+let phone=document.getElementById("phone").value.trim();
+let address=document.getElementById("address").value.trim();
+if(!name||!phone||!address){alert("Iltimos, ism, telefon va manzilni kiriting.");return;}
+let msg="MeningBozorim buyurtmasi:%0A"+keys.map(n=>n+" — "+basket[n]+" ta").join("%0A")+
+"%0ANarx: kelishiladi%0AIsm: "+encodeURIComponent(name)+
+"%0ATelefon: "+encodeURIComponent(phone)+"%0AManzil: "+encodeURIComponent(address);
+window.open("https://wa.me/998914023337?text="+msg,"_blank");
+}
+showProducts();
+</script>
+</body>
+</html>
+
